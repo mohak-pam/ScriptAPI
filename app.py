@@ -13,7 +13,15 @@ def save_password():
     if 'password' not in data or 'uuid' not in data:
         return jsonify({'error': 'UUID and password are required'}), 400
 
-    # Create a new password entry with the provided UUID
+    # Check if an entry with the same UUID already exists
+    for entry in passwords:
+        if entry['uuid'] == data['uuid']:
+            # Update the password and return a message
+            entry['password'] = data['password']
+            entry['created_at'] = datetime.utcnow()
+            return jsonify({'message': 'Password updated successfully'}), 200
+
+    # If no existing entry, create a new one
     new_password = {
         'uuid': data['uuid'],
         'password': data['password'],
